@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GBVHelpBot</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 GBVHelpBot</h1>
+        <p id="intro">You are safe here. 💙 Select a language to begin:</p>
+        <button onclick="setLang('en')">English</button>
+        <button onclick="setLang('sw')">Kiswahili</button>
+        <div id="questions" style="display:none;">
+            <h3>Answer the following:</h3>
+            <ul id="questionList"></ul>
+            <button onclick="startChat()">Continue to Chat</button>
+        </div>
+        <div id="chatBox" style="display:none;">
+            <div id="chatLog"></div>
+            <input type="text" id="userInput" placeholder="Type your message...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        let lang = 'en';
+        let currentQuestion = 0;
+        let questions = {{ questions | tojson }};
+        function setLang(selectedLang) {
+            lang = selectedLang;
+            document.getElementById('questions').style.display = 'block';
+            let list = document.getElementById('questionList');
+            list.innerHTML = '';
+            questions.forEach((q, i) => {
+                let li = document.createElement('li');
+                li.innerHTML = q + '<br><input type="text">';
+                list.appendChild(li);
+            });
+        }
+
+        function startChat() {
+            document.getElementById('questions').style.display = 'none';
+            document.getElementById('chatBox').style.display = 'block';
+        }
+
+        async function sendMessage() {
+            let input = document.getElementById('userInput').value;
+            if (!input) return;
+            let chatLog = document.getElementById('chatLog');
+            chatLog.innerHTML += "<div><strong>You:</strong> " + input + "</div>";
+            document.getElementById('userInput').value = '';
+            const response = await fetch("/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: input, lang: lang })
+            });
+            const data = await response.json();
+            chatLog.innerHTML += "<div><strong>Bot:</strong> " + data.reply + "</div>";
+        }
+    </script>
+</body>
+</html>
