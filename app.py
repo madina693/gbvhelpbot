@@ -1,10 +1,14 @@
 from flask import Flask, render_template, request, jsonify
 import openai
 from dotenv import load_dotenv
+load_dotenv()  # Load the .env file
 import os
 
-app = Flask(__name__)
-openai.api_key = os.getenv("os.getenv("OPENAI_API_KEY")")
+# Load the .env file
+load_dotenv()
+
+openai.api_key = os.getenv("OPENAI_API_KEY")  # Securely fetch the key
+
 
 # Function to get the OpenAI response
 def get_openai_response(user_input):
@@ -15,6 +19,7 @@ def get_openai_response(user_input):
     )
     return response.choices[0].text.strip()
 
+app = Flask(__name__)
 initial_questions = [
     "Do you feel unsafe in your current relationship?",
     "Have you ever been physically hurt by someone close to you?",
