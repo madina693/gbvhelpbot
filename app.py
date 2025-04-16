@@ -3,7 +3,16 @@ import openai
 import os
 
 app = Flask(__name__)
-openai.api_key = os.getenv("OPENAI_API_KEY")
+openai.api_key = os.getenv("os.getenv("OPENAI_API_KEY")")
+
+# Function to get the OpenAI response
+def get_openai_response(user_input):
+    response = openai.Completion.create(
+        engine="text-davinci-003",  # You can also use "gpt-4" if you have access
+        prompt=user_input,
+        max_tokens=150
+    )
+    return response.choices[0].text.strip()
 
 initial_questions = [
     "Do you feel unsafe in your current relationship?",
